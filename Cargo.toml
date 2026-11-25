@@ -1,0 +1,9 @@
+[package]
+name = "openapi-gen"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+indexmap = "2.14.2"
+regex = "1.13.2"
+jtk-parser = { git = "https://github.com/dhufnagel/jtk", tag = "v0.5.0" }
