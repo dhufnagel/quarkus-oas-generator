@@ -42,3 +42,9 @@ Keep the Quarkus build as the reference in CI, so a document that differs is not
 `cargo test` runs quoag on each project in `tests/fixtures` and compares the output byte for byte with the
 documents in its `openapi` directory, which Quarkus wrote. After changing a fixture, regenerate them in its directory
 with `mvn compile quarkus:build` and delete `target`.
+
+## Releases
+
+Pushing a tag `vX.Y.Z` that matches the version in `Cargo.toml` builds quoag for Linux (glibc 2.17, cross-compiled
+with zig), macOS and Windows, each on x86_64 and arm64, and creates a draft release with the archives and their
+SHA-256 checksums.
