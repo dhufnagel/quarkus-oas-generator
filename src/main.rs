@@ -96,7 +96,7 @@ fn parse_args() -> Result<Args, String> {
             "--profile" => args.profile = it.next().ok_or("--profile needs a value")?,
             "-h" | "--help" => {
                 println!(
-                    "usage: openapi-gen [--project <maven module>] [--out <dir>] [--profile <quarkus profile>]\n\n\
+                    "usage: quoag [--project <maven module>] [--out <dir>] [--profile <quarkus profile>]\n\n\
                      Reads <project>/src/main/java, <project>/src/main/resources/application.properties and\n\
                      <project>/pom.xml and writes openapi.json and openapi.yaml to --out (default: the\n\
                      configured quarkus.smallrye-openapi.store-schema-directory)."

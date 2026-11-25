@@ -1,4 +1,4 @@
-# openapi-gen
+# quoag
 
 Generates `openapi.json` and `openapi.yaml` of a Quarkus project from its Java sources, byte-identical to what
 `quarkus-smallrye-openapi` stores in its `store-schema-directory` during `quarkus:build`.
@@ -6,8 +6,8 @@ It neither compiles nor runs Java and takes about 0.2 s instead of the Maven/Qua
 
 ```bash
 cargo build --release
-target/release/openapi-gen --project path/to/quarkus-app   # writes to the store-schema-directory
-target/release/openapi-gen --project path/to/quarkus-app --out /tmp/spec
+target/release/quoag --project path/to/quarkus-app   # writes to the store-schema-directory
+target/release/quoag --project path/to/quarkus-app --out /tmp/spec
 ```
 
 `--profile` selects the Quarkus profile for `application.properties` (default `dev`, as in the pre-commit hook).
