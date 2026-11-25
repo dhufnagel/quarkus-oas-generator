@@ -10,7 +10,7 @@ target/release/quoag --project path/to/quarkus-app   # writes to the store-schem
 target/release/quoag --project path/to/quarkus-app --out /tmp/spec
 ```
 
-`--profile` selects the Quarkus profile for `application.properties` (default `dev`, as in the pre-commit hook).
+`--profile` selects the Quarkus profile for `application.properties` (default `dev`).
 
 ## How it works
 
@@ -29,9 +29,16 @@ target/release/quoag --project path/to/quarkus-app --out /tmp/spec
 
 - SmallRye only writes JDK types such as `UUID` or `LocalTime` as `$ref` when they are in Quarkus' Jandex index.
   Quarkus indexes them as a side effect of processing beans, resources and entities; the generator approximates
-  this with the types used in fields and method signatures of such classes (`indexed_jdk_types` in `main.rs`).
+  this with the types used in fields and method signatures of such classes and the field types reachable from
+  the parameter and return types of REST methods (`indexed_jdk_types` in `main.rs`).
 - Constructs the port does not cover (e.g. `@JsonValue` on enums, `@JsonUnwrapped`, sub-resource locators,
-  `@Parameter`) and unknown `quarkus.smallrye-openapi.*` settings make it fail instead of writing a different
-  document.
+  `@Parameter`), unknown `quarkus.smallrye-openapi.*` settings and the defaults `auto-add-tags` and
+  `auto-add-server` (set both to `false`) make it fail instead of writing a different document.
 
-The Quarkus build stays the reference: if the outputs differ, `validate-openapi` in CI fails.
+Keep the Quarkus build as the reference in CI, so a document that differs is noticed.
+
+## Tests
+
+`cargo test` runs quoag on each project in `tests/fixtures` and compares the output byte for byte with the
+documents in its `openapi` directory, which Quarkus wrote. After changing a fixture, regenerate them in its directory
+with `mvn compile quarkus:build` and delete `target`.

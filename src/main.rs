@@ -43,16 +43,18 @@ const BEAN_ANNOTATIONS: &[&str] = &[
     "jakarta.persistence.MappedSuperclass",
 ];
 
-/// JDK types that end up in Quarkus' index: Quarkus indexes the types of fields and method signatures of beans,
-/// resources and entities when it processes them.
+/// JDK types that end up in Quarkus' index. Quarkus indexes the types of fields and method signatures of beans,
+/// resources and entities when it processes them, and, when it registers the parameter and return types of REST
+/// methods for reflection, the field types of the classes reachable from them.
 fn indexed_jdk_types(idx: &index::Index) -> Vec<String> {
     let mut found = std::collections::BTreeSet::new();
-    let mut visit = |t: &index::Type| {
+    let mut note = |t: &index::Type| {
         let name = t.name();
         if REGISTRABLE_JDK_TYPES.contains(&name.as_str()) {
             found.insert(name);
         }
     };
+    let mut rest_types = Vec::new();
     for c in &idx.classes {
         if !c
             .annotations
@@ -61,14 +63,45 @@ fn indexed_jdk_types(idx: &index::Index) -> Vec<String> {
         {
             continue;
         }
+        let is_resource = c.annotations.iter().any(|a| a.name == "jakarta.ws.rs.Path");
         for f in &c.fields {
-            visit(&f.ty);
+            note(&f.ty);
         }
         for m in &c.methods {
-            visit(&m.return_type);
+            note(&m.return_type);
             for p in &m.params {
-                visit(&p.ty);
+                note(&p.ty);
             }
+            if is_resource {
+                rest_types.push(m.return_type.clone());
+                rest_types.extend(m.params.iter().map(|p| p.ty.clone()));
+            }
+        }
+    }
+    let mut visited = std::collections::HashSet::new();
+    while let Some(t) = rest_types.pop() {
+        note(&t);
+        match &t.ty {
+            index::Ty::Class(name) | index::Ty::Param { name, .. } => {
+                if let index::Ty::Param { args, .. } = &t.ty {
+                    rest_types.extend(args.iter().cloned());
+                }
+                if visited.insert(name.clone())
+                    && let Some(c) = idx.class(name)
+                {
+                    rest_types.extend(
+                        c.fields
+                            .iter()
+                            .filter(|f| !f.flags.static_)
+                            .map(|f| f.ty.clone()),
+                    );
+                }
+            }
+            index::Ty::Array(component, _) => rest_types.push((**component).clone()),
+            index::Ty::Wildcard { extends, super_ } => {
+                rest_types.extend(extends.iter().chain(super_).map(|b| (**b).clone()));
+            }
+            _ => {}
         }
     }
     found.into_iter().collect()

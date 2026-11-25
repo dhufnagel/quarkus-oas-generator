@@ -1,0 +1,2 @@
+# the expected documents are compared byte for byte, also on Windows
+tests/fixtures/*/openapi/* -text
