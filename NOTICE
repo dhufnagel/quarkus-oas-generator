@@ -1,0 +1,11 @@
+quoag
+Copyright 2026 Dominik Hufnagel
+
+This product contains Rust ports of parts of the following projects, licensed under the Apache License 2.0:
+
+- smallrye-open-api (https://github.com/smallrye/smallrye-open-api): the annotation scanner, schema registry
+  and `TypeUtil` helpers in `src/scan` and `src/index/known.rs`.
+- Quarkus (https://github.com/quarkusio/quarkus): the OpenAPI filters of quarkus-smallrye-openapi in
+  `src/quarkus.rs`.
+- Jackson (https://github.com/FasterXML) and SnakeYAML (https://bitbucket.org/snakeyaml/snakeyaml): the JSON and
+  YAML output in `src/writer.rs`.

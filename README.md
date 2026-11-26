@@ -48,3 +48,8 @@ with `mvn compile quarkus:build` and delete `target`.
 Pushing a tag `vX.Y.Z` that matches the version in `Cargo.toml` builds quoag for Linux (glibc 2.17, cross-compiled
 with zig), macOS and Windows, each on x86_64 and arm64, and creates a draft release with the archives and their
 SHA-256 checksums.
+
+## License
+
+[Apache License 2.0](LICENSE). Parts are ports of smallrye-open-api, Quarkus, Jackson and SnakeYAML, see
+[NOTICE](NOTICE).

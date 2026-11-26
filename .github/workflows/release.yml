@@ -96,7 +96,7 @@ jobs:
         run: |
           name="quoag-$VERSION-${{ matrix.target }}"
           mkdir -p "dist/$name"
-          cp "$BIN" README.md "dist/$name/"
+          cp "$BIN" README.md LICENSE NOTICE "dist/$name/"
           cd dist
           if [[ "${{ matrix.os }}" == windows-* ]]; then
             7z a -tzip "$name.zip" "$name" > /dev/null
